@@ -1,0 +1,46 @@
+package es.ulpgc.spotify.downloader;
+
+import com.google.gson.Gson;
+
+import java.util.List;
+import java.util.Map;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception{
+        MusicSource source = new Spotify();
+        List<Track> tracks = source.tracksOf("Eminem");
+        List<Album> albums = source.albumsOf("Eminem");
+        MusicDataBase musicDataBase = new SQLiteStore();
+        for (Track track: tracks){
+            musicDataBase.add(track);
+        }
+        for (Album album: albums){
+            musicDataBase.add(album);
+        }
+        Map<String, String> artists = Map.of("Eminem", "7dGJo4pcD2V6oG8kP0tJRR",
+                "Ne-yo","21E3waRsmPlU7jZsS13rcj",
+                "David Guetta","1Cs0zKBU1kc0i8ypK3B9ai",
+                "Marc Anthony","4wLXwxDeWQ8mtUIRPxGiD6",
+                "Melendi","1EXjXQpDx2pROygh8zvHs4",
+                "Lady Gaga","1HY2Jd0NmPuamShAr6KMms",
+                "Bruce Springsteen", "3eqjTLE0HfPfh78zjh6TqT");
+        SpotifyAccessor accessor = new SpotifyAccessor();
+        String json = accessor.get("/artists/7dGJo4pcD2V6oG8kP0tJRR/albums", Map.of("country", "ES"));
+        System.out.println(json);
+        Gson gson = new Gson();
+        Track track = gson.fromJson(json, Track.class);
+        System.out.println(track);
+        for (Map.Entry<String, String> entry : artists.entrySet()) {
+            List<Track> tracks = source.tracksOf("Eminem");
+            List<Album> albums = source.albumsOf("Eminem");
+            entry.getValue();
+        }
+    }
+
+    //TODO
+    //List<Artist> getArtists(...) filtering by some criteria
+    //List<Album> getAlbums(artist)
+    //List<Track> getTracks(artist),
+
+}

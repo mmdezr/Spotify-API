@@ -1,0 +1,33 @@
+package es.ulpgc.spotify.downloader;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class SQLiteStore implements MusicDataBase {
+    private final Connection connection;
+    public SQLiteStore() throws SQLException{
+        connection = DriverManager.getConnection("jdbc:Sqlite:tracks.db");
+        initDataBase();
+    }
+    public static final String INIT = //sentencia ddl
+            "CREATE TABLE IF NOT EXISTS tracks (\n"
+            + "author TEXT,"
+            + "title TEXT,"
+            + "release_date TEXT,"
+            + "popularity NUMBER,"
+            + "duration NUMBER,"
+            + "explicit BOOLEAN"
+            + ");";
+    private void initDataBase() throws SQLException{
+        connection.createStatement().execute(INIT);
+    }
+    public void add(Track track) {
+        try {
+            connection.createStatement().execute(DMLTranslator.insertStatementOf(track));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
